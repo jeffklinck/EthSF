@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limit Order Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            padding: 20px;
+        }
+
+        .order-book-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .order-book-section {
+            width: 45%;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+        }
+
+        .order-book-section h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .order-list {
+            list-style-type: none;
+            padding: 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .order-list li {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+            position: relative;
+        }
+
+        .order-list li:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .bid {
+            color: green;
+            flex-direction: row;
+        }
+
+        .ask {
+            color: red;
+            flex-direction: row-reverse;
+        }
+
+        .price {
+            font-weight: bold;
+            margin-right: 10px;
+            margin-left: 10px;
+            flex-shrink: 0;
+        }
+
+        .bar-container {
+            flex-grow: 1;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+            height: 20px;
+        }
+
+        .bar {
+            height: 100%;
+            position: absolute;
+            top: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .bid-bar {
+            background-color: rgba(0, 255, 0, 0.6);
+            left: 0;
+        }
+
+        .ask-bar {
+            background-color: rgba(255, 0, 0, 0.6);
+            right: 0;
+            color: #fff;
+        }
+    </style>
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('http://127.0.0.1:8080/array');
+                const data = await response.json();
+                const maxBidQuantity = Math.max(...data.bids.map(order => order.quantity));
+                const maxAskQuantity = Math.max(...data.asks.map(order => order.quantity));
+                displayData(data.bids, 'bidArrayList', 'bid', maxBidQuantity);
+                displayData(data.asks, 'askArrayList', 'ask', maxAskQuantity);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+
+            // Refresh data every 3 seconds
+            setTimeout(fetchData, 30);
+        }
+
+        function displayData(orders, listId, type, maxQuantity) {
+            const list = document.getElementById(listId);
+            list.innerHTML = '';
+            orders.forEach(order => {
+                const listItem = document.createElement('li');
+                listItem.className = type;
+
+                const priceSpan = document.createElement('span');
+                priceSpan.className = 'price';
+                priceSpan.textContent = `Price: ${order.price}`;
+
+                const barContainer = document.createElement('div');
+                barContainer.className = 'bar-container';
+
+                const bar = document.createElement('div');
+                bar.className = `bar ${type}-bar`;
+                bar.style.width = `${(order.quantity / maxQuantity) * 100}%`;
+
+                // Display the quantity along the bar
+                const quantityText = document.createElement('span');
+                quantityText.textContent = `Qty: ${order.quantity}`;
+                if (type === 'bid') {
+                    quantityText.style.color = 'black'; // Set qty color for bids to black
+                }
+
+                bar.appendChild(quantityText);
+                barContainer.appendChild(bar);
+
+                if (type === 'bid') {
+                    // For bid, price is on the left, bar is on the right
+                    listItem.appendChild(priceSpan);
+                    listItem.appendChild(barContainer);
+                } else {
+                    // For ask, bar is on the right, price is on the left
+                    listItem.appendChild(barContainer);
+                    listItem.appendChild(priceSpan);
+                }
+
+                list.appendChild(listItem);
+            });
+        }
+
+        window.onload = fetchData;
+    </script>
+</head>
+<body>
+    <h1>EssenSwap</h1>
+    <div class="order-book-container">
+        <div class="order-book-section">
+            <h2>Bid Orders</h2>
+            <ul id="bidArrayList" class="order-list"></ul>
+        </div>
+        <div class="order-book-section">
+            <h2>Ask Orders</h2>
+            <ul id="askArrayList" class="order-list"></ul>
+        </div>
+    </div>
+</body>
+</html>
