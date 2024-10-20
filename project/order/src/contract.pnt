@@ -12,23 +12,31 @@ storage {
 predicate Order{
     var amount: int;
 
-    interface TokenAInstance = Token(storage::contract_A);
-    interface TokenBInstance = Token(storage::contract_B);
 
-    state amount_left: int = mut storage::bid_amount;
+    state cont_A = mut storage::contract_A;
+    state cont_B = mut storage::contract_B;
+
+    interface TokenAInstance = Token(cont_A);
+    interface TokenBInstance = Token(cont_B);
+
+    state amount_left = mut storage::bid_amount;
+
+    state owner = mut storage::owner;
+    
     state balance_A = TokenAInstance::storage::balances[owner];
     state balance_B = TokenBInstance::storage::balances[owner];
-    state owner = mut storage::owner;
+
+    state price = mut storage::price;
 
     constraint amount > 0;
 
     constraint amount_left' == amount_left - amount;
 
-    contraint balance_A' == balance_A + amount;
+    constraint balance_A' == balance_A + amount;
     constraint balance_B' == balance_B - amount * price;
 
     constraint amount_left' == amount_left - amount;
-    constaint balance_B' >= 0;
+    constraint balance_B' >= 0;
 
     constraint owner' == owner;
 }
@@ -39,13 +47,32 @@ predicate UpdateVars {
     var new_A_id: b256;
     var new_B_id: b256;
 
-    state n_amount = mut storage::bid_amount;
-    state n_price = mut storage::price;
-    state n_a_addr = mut storage::contract_A;
-    state n_b_addr = mut storage::contract_B;
+    
+    //state n_amount = mut storage::bid_amount;
+    //state n_price = mut storage::price;
+    //state n_a_addr = mut storage::contract_A;
+    //state n_b_addr = mut storage::contract_B;
 
-    n_amount' == new_amount;
-    n_price' == new_price;
-    new_a_addr' == new_A_id;
-    new_b_addr' == new_B_id;
+    //constraint n_amount' == new_amount;
+    //constraint n_price' == new_price;
+    //constraint new_a_addr' == new_A_id;
+    //constraint new_b_addr' == new_B_id;
+}
+
+interface Token {
+    storage {
+        total_supply: int,
+        balances: (b256 => int),
+    }
+
+    predicate Mint {
+        pub var receiver: b256;
+        pub var amount: int;
+    }
+
+    predicate Increment{
+        pub var from: b256;
+        pub var receiver: b256;
+        pub var amount: int;
+    }
 }
