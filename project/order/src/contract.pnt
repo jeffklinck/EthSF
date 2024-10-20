@@ -45,18 +45,18 @@ predicate UpdateVars {
     var new_amount: int;
     var new_price: int;
     var new_A_id: b256;
-    var new_B_id: b256;
+   var new_B_id: b256;
 
     
-    //state n_amount = mut storage::bid_amount;
-    //state n_price = mut storage::price;
-    //state n_a_addr = mut storage::contract_A;
-    //state n_b_addr = mut storage::contract_B;
+    state bid_amount: int = mut storage::bid_amount;
+    state price: int = mut storage::price;
+    state contract_A: b256 = mut storage::contract_A;
+    state contract_B: b256 = mut storage::contract_B;
 
-    //constraint n_amount' == new_amount;
-    //constraint n_price' == new_price;
-    //constraint new_a_addr' == new_A_id;
-    //constraint new_b_addr' == new_B_id;
+    constraint bid_amount' == new_amount;
+    constraint price' == new_price;
+    constraint contract_A' == new_A_id;
+    constraint contract_B' == new_B_id;
 }
 
 interface Token {
@@ -70,7 +70,7 @@ interface Token {
         pub var amount: int;
     }
 
-    predicate Increment{
+    predicate Send{
         pub var from: b256;
         pub var receiver: b256;
         pub var amount: int;

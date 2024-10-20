@@ -1,0 +1,30 @@
+storage {
+    total_supply: int,
+    balances: (b256 => int),
+}
+
+// Sends an amount of newly created coins to an address
+predicate Mint {
+    var receiver: b256;
+    var amount: int;
+
+    state receiver_balance = mut storage::balances[receiver];
+    state total_supply = mut storage::total_supply;
+
+    constraint total_supply' == total_supply + amount;
+    constraint receiver_balance' == receiver_balance + amount;
+}
+
+// Sends an amount of existing coins from address `from` to address `receiver`
+predicate Send {
+    var from: b256;
+    var receiver: b256;
+    var amount: int;
+
+    state from_balance = mut storage::balances[from];
+    state receiver_balance = mut storage::balances[receiver];
+
+    constraint amount < from_balance;
+    constraint from_balance' == from_balance - amount;
+    constraint receiver_balance' == receiver_balance + amount;
+}
