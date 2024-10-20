@@ -990,6 +990,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "28dea519a9695b9977216879a3ebfddf92f1c08c05d984f8996aecd6ecdc811d"
 
 [[package]]
+name = "fixedbitset"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0ce7134b9999ecaf8bcd65542e436736ef32ddca1b3e06094cb6ec5755203b80"
+
+[[package]]
 name = "fnv"
 version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1565,7 +1571,9 @@ dependencies = [
  "essential-hash 0.4.0",
  "essential-node",
  "essential-rest-client",
+ "essential-sign 0.4.0",
  "essential-types 0.3.0",
+ "pint-abi",
  "tokio",
 ]
 
@@ -1599,6 +1607,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 
 [[package]]
+name = "petgraph"
+version = "0.6.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b4c5cc86750666a3ed20bdaf5ca2a0344f9c67674cae0515bec2da16fbaa47db"
+dependencies = [
+ "fixedbitset",
+ "indexmap",
+]
+
+[[package]]
 name = "pin-project-lite"
 version = "0.2.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1609,6 +1627,56 @@ name = "pin-utils"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b870d8c151b6f2fb93e84a13146138f05d02ed11c7e7c54f8826aaaf7c9f184"
+
+[[package]]
+name = "pint-abi"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "24a701b4e72395c770514a9214484b5d264c904c9f551eb7ebf9df0cd23e0a04"
+dependencies = [
+ "essential-types 0.3.0",
+ "pint-abi-gen",
+ "pint-abi-types",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "pint-abi-gen"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c67e1b4a938eda5d669b6564ddb2fe9780a0e152f3364f3b454c94da44587996"
+dependencies = [
+ "essential-hash 0.4.0",
+ "essential-types 0.3.0",
+ "pint-abi-types",
+ "pint-abi-visit",
+ "proc-macro2",
+ "quote",
+ "serde",
+ "serde_json",
+ "syn",
+]
+
+[[package]]
+name = "pint-abi-types"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "51d3c1270972ed412fa2df611624e3e115fd00a8fe3782ad255efe0b30ec8406"
+dependencies = [
+ "serde",
+]
+
+[[package]]
+name = "pint-abi-visit"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "56cd1cbbca5b27599ee4b578089b723eeece6d1f4f479a617002da9f00a1d5ec"
+dependencies = [
+ "essential-types 0.3.0",
+ "petgraph",
+ "pint-abi-types",
+]
 
 [[package]]
 name = "pkcs8"
