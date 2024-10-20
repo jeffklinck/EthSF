@@ -1,23 +1,19 @@
+use unique::@init_once;
+
 storage {
     bid_amount: int,
     
     price: int, // A for B price (Eth/USDC = 3000),
 
-    contract_A: b256,
-    contract_B: b256,
-
     owner: b256,
+    nonce: int,
 }
 
-predicate Order{
+predicate Bid{
     var amount: int;
 
-
-    state cont_A = mut storage::contract_A;
-    state cont_B = mut storage::contract_B;
-
-    interface TokenAInstance = Token(cont_A);
-    interface TokenBInstance = Token(cont_B);
+    interface TokenAInstance = Token(unique::contract_A);
+    interface TokenBInstance = Token(unique::contract_B);
 
     state amount_left = mut storage::bid_amount;
 
@@ -25,6 +21,7 @@ predicate Order{
     
     state balance_A = TokenAInstance::storage::balances[owner];
     state balance_B = TokenBInstance::storage::balances[owner];
+    state nonce = mut storage::nonce;
 
     state price = mut storage::price;
 
@@ -39,24 +36,53 @@ predicate Order{
     constraint balance_B' >= 0;
 
     constraint owner' == owner;
+
+    constraint @init_once(nonce; unique::nonce);
+}
+
+predicate Ask{
+    var amount: int;
+
+    interface TokenAInstance = Token(unique::contract_A);
+    interface TokenBInstance = Token(unique::contract_B);
+
+    state amount_left = mut storage::bid_amount;
+
+    state owner = mut storage::owner;
+    
+    state balance_A = TokenAInstance::storage::balances[owner];
+    state balance_B = TokenBInstance::storage::balances[owner];
+    state nonce = mut storage::nonce;
+
+    state price = mut storage::price;
+
+    constraint amount > 0;
+
+    constraint amount_left' == amount_left - amount;
+
+    constraint balance_A' == balance_A - amount;
+    constraint balance_B' == balance_B + amount * price;
+
+    constraint amount_left' == amount_left - amount;
+    constraint balance_B' >= 0;
+
+    constraint owner' == owner;
+
+    constraint @init_once(nonce; unique::nonce);
 }
 
 predicate UpdateVars {
     var new_amount: int;
     var new_price: int;
-    var new_A_id: b256;
-    var new_B_id: b256;
 
-    
-    //state n_amount = mut storage::bid_amount;
-    //state n_price = mut storage::price;
-    //state n_a_addr = mut storage::contract_A;
-    //state n_b_addr = mut storage::contract_B;
+    state n_amount = mut storage::bid_amount;
+    state n_price = mut storage::price;
+    state nonce = mut storage::nonce;
 
-    //constraint n_amount' == new_amount;
-    //constraint n_price' == new_price;
-    //constraint new_a_addr' == new_A_id;
-    //constraint new_b_addr' == new_B_id;
+    constraint n_amount' == new_amount;
+    constraint n_price' == new_price;
+
+    constraint @init_once(nonce; unique::nonce);
 }
 
 interface Token {
@@ -70,7 +96,7 @@ interface Token {
         pub var amount: int;
     }
 
-    predicate Increment{
+    predicate Send {
         pub var from: b256;
         pub var receiver: b256;
         pub var amount: int;

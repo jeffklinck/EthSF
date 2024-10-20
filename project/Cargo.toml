@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0.90"
+essential-hash = "0.4.0"
+reqwest = "0.12.8"
+serde = "1.0.210"

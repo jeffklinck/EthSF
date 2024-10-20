@@ -10,6 +10,7 @@ essential-app-utils = "0.4.0"
 essential-hash = "0.4.0"
 essential-rest-client = "0.4.0"
 essential-types = "0.3.0"
+regex = "1.11.0"
 tokio = { version = "1.40.0", features = ["full"] }
 
 [dev-dependencies]
@@ -17,3 +18,5 @@ essential-app-utils = { version = "0.4.0", features = ["test-utils"] }
 essential-builder = "0.8.0"
 essential-builder-db = "0.4.0"
 essential-node = "0.6.0"
+
+

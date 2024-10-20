@@ -8,4 +8,6 @@ actix-web = "4"
 actix-cors = "0.6"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
+essential-types = "0.3.0"
+anyhow = "1.0.90"
 
