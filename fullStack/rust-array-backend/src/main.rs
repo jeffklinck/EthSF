@@ -119,7 +119,7 @@ fn match_orders(buy_orders: &mut Vec<Order>, ask_orders: &mut Vec<Order>) -> (Ve
     (matched_orders_bids, matched_orders_asks, buy_orders.clone(), ask_orders.clone())
 }
 
-
+/*
 //EXAMPLE
 const BID_AMOUNT_KEY: Word = 0;
 const PRICE_KEY: Word = 1;
@@ -269,6 +269,7 @@ pub fn create_update_solution(
         }],
     }
 }
+*/
 
 #[post("/update")]
 async fn match_update(order_book: web::Data<Arc<Mutex<OrderBook>>>) -> impl Responder {
@@ -277,6 +278,7 @@ async fn match_update(order_book: web::Data<Arc<Mutex<OrderBook>>>) -> impl Resp
     let mut ask_orders = order_book.asks.clone();
     let (matched_orders_bids, matched_orders_asks, new_buys, new_asks) = match_orders(&mut buy_orders, &mut ask_orders);
 
+    /*
     let a = 0; //"amount"
     let b = 0; //"amount * price"
 
@@ -301,6 +303,7 @@ async fn match_update(order_book: web::Data<Arc<Mutex<OrderBook>>>) -> impl Resp
     for matched_order in matched_orders_asks {
 
     }
+    */
 
     order_book.bids = buy_orders;
     order_book.asks = ask_orders;
